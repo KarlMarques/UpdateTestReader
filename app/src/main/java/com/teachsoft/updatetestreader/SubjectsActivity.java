@@ -1,11 +1,13 @@
 package com.teachsoft.updatetestreader;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,27 +19,32 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SubjectsRecyclerItemClickListener.OnRecyclerClickListener {
-    private List<ClassSubject> mClassSubjectList = null;
+public class SubjectsActivity extends BaseActivity implements SubjectsRecyclerItemClickListener.OnRecyclerClickListener {
+
+//    private Button mButtonAddSubject;
+
+    private List<Subject> mSubjectList = null;
+
     private SubjectsRecyclerViewAdapter mSubjectsRecyclerViewAdapter;
 
     FirebaseDatabase mFirebaseDB = FirebaseDatabase.getInstance();
-    DatabaseReference mDBReferenceSubjects = mFirebaseDB.getReference("Subjects");
+    DatabaseReference mDBReferenceSubjects;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_subjects);
+
+//        mButtonAddSubject = findViewById(R.id.buttonAddSubject);
 
         RecyclerView recyclerViewSubjects = findViewById(R.id.recyclerViewSubjects);
         recyclerViewSubjects.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewSubjects.addOnItemTouchListener(new SubjectsRecyclerItemClickListener(SubjectsActivity.this, recyclerViewSubjects, SubjectsActivity.this));
 
-        recyclerViewSubjects.addOnItemTouchListener(new SubjectsRecyclerItemClickListener(MainActivity.this, recyclerViewSubjects, MainActivity.this));
-
-        mSubjectsRecyclerViewAdapter = new SubjectsRecyclerViewAdapter(MainActivity.this, new ArrayList<ClassSubject>());
+        mSubjectsRecyclerViewAdapter = new SubjectsRecyclerViewAdapter(SubjectsActivity.this, new ArrayList<Subject>());
         recyclerViewSubjects.setAdapter(mSubjectsRecyclerViewAdapter);
 
-
+        mDBReferenceSubjects = mFirebaseDB.getReference(SUBJECTS_TITLE);
         mDBReferenceSubjects.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -47,38 +54,35 @@ public class MainActivity extends AppCompatActivity implements SubjectsRecyclerI
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
+
+//        mButtonAddSubject.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(SubjectsActivity.this, SubjectConfigurationActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     @Override
     public void onItemClick(View view, int position) {
-//        Log.d(TAG, "onItemClick: starts");
-        Toast.makeText(MainActivity.this, "Normal tap at position " + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemLongClick(View view, int position) {
-//        Log.d(TAG, "onItemLongClick: starts");
-        Toast.makeText(MainActivity.this, "Long tap at position " + position, Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(MySubjectsActivity.this, CurrentSubjectActivity.class);
-//        intent.putExtra(CURRENT_SUBJECT, mMySubjectsRecyclerViewAdapter.getSubject(position));
-//        startActivity(intent);
+        Intent intent = new Intent(SubjectsActivity.this, ChaptersActivity.class);
+        intent.putExtra(CURRENT_SUBJECT, mSubjectsRecyclerViewAdapter.getSubject(position));
+        startActivity(intent);
     }
-
 
     private void getData(DataSnapshot dataSnapshot){
-        mClassSubjectList = new ArrayList<>();
+        mSubjectList = new ArrayList<>();
 
         for (DataSnapshot ds : dataSnapshot.getChildren()){
-            String title = ds.getValue(ClassSubject.class).getTitle();
-
-            ClassSubject classSubject = new ClassSubject();
-            classSubject.setTitle(title);
-
-            mClassSubjectList.add(classSubject);
+            Subject subject = ds.getValue(Subject.class);
+            mSubjectList.add(subject);
         }
 
-        mSubjectsRecyclerViewAdapter.loadNewData(mClassSubjectList);
-        Toast.makeText(MainActivity.this, "ClassSubjectList size: " + mClassSubjectList.size(), Toast.LENGTH_SHORT).show();
+        mSubjectsRecyclerViewAdapter.loadNewData(mSubjectList);
     }
-
 }
