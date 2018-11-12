@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,12 +20,15 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
 
     private TextView mTextViewTitle;
     private TextView mTextViewQuestion;
-    private CheckBox mCheckBoxA;
-    private CheckBox mCheckBoxB;
-    private CheckBox mCheckBoxC;
-    private CheckBox mCheckBoxD;
-    private CheckBox mCheckBoxE;
     private Button mButtonSubmit;
+
+    private RadioGroup mRadioGroupAlternatives;
+
+    private RadioButton mRadioButton1;
+    private RadioButton mRadioButton2;
+    private RadioButton mRadioButton3;
+    private RadioButton mRadioButton4;
+    private RadioButton mRadioButton5;
 
     private Subject mCurrentSubject;
     private Chapter mCurrentChapter;
@@ -51,97 +56,33 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
 
         mTextViewTitle = findViewById(R.id.textViewTitle);
         mTextViewQuestion = findViewById(R.id.textViewQuestion);
-        mCheckBoxA = findViewById(R.id.checkBoxA);
-        mCheckBoxB = findViewById(R.id.checkBoxB);
-        mCheckBoxC = findViewById(R.id.checkBoxC);
-        mCheckBoxD = findViewById(R.id.checkBoxD);
-        mCheckBoxE = findViewById(R.id.checkBoxE);
+
+        mRadioGroupAlternatives = findViewById(R.id.radioGroupAlternatives);
+        mRadioButton1 = findViewById(R.id.radioButton1);
+        mRadioButton2 = findViewById(R.id.radioButton2);
+        mRadioButton3 = findViewById(R.id.radioButton3);
+        mRadioButton4 = findViewById(R.id.radioButton4);
+        mRadioButton5 = findViewById(R.id.radioButton5);
+
         mButtonSubmit = findViewById(R.id.buttonSubmit);
 
         mTextViewTitle.setText(exerciseTitle);
         mTextViewQuestion.setText(exerciseQuestion);
-        mCheckBoxA.setText(exerciseA);
-        mCheckBoxB.setText(exerciseB);
-        mCheckBoxC.setText(exerciseC);
-        mCheckBoxD.setText(exerciseD);
-        mCheckBoxE.setText(exerciseE);
-
-        mCheckBoxA.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckBoxB.setChecked(false);
-                mCheckBoxC.setChecked(false);
-                mCheckBoxD.setChecked(false);
-                mCheckBoxE.setChecked(false);
-            }
-        });
-        mCheckBoxB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckBoxA.setChecked(false);
-                mCheckBoxC.setChecked(false);
-                mCheckBoxD.setChecked(false);
-                mCheckBoxE.setChecked(false);
-            }
-        });
-        mCheckBoxC.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckBoxA.setChecked(false);
-                mCheckBoxB.setChecked(false);
-                mCheckBoxD.setChecked(false);
-                mCheckBoxE.setChecked(false);
-            }
-        });
-        mCheckBoxD.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckBoxA.setChecked(false);
-                mCheckBoxB.setChecked(false);
-                mCheckBoxC.setChecked(false);
-                mCheckBoxE.setChecked(false);
-            }
-        });
-        mCheckBoxE.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckBoxA.setChecked(false);
-                mCheckBoxB.setChecked(false);
-                mCheckBoxC.setChecked(false);
-                mCheckBoxD.setChecked(false);
-            }
-        });
-
+        mRadioButton1.setText(exerciseA);
+        mRadioButton2.setText(exerciseB);
+        mRadioButton3.setText(exerciseC);
+        mRadioButton4.setText(exerciseD);
+        mRadioButton5.setText(exerciseE);
 
         mButtonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Boolean boxChecked = mCheckBoxA.isChecked() ||
-                        mCheckBoxB.isChecked() ||
-                        mCheckBoxC.isChecked() ||
-                        mCheckBoxD.isChecked() ||
-                        mCheckBoxE.isChecked();
+                int buttonId = mRadioGroupAlternatives.getCheckedRadioButtonId();
 
-                if (boxChecked){
-                    String id = "none";
-
-                    if (mCheckBoxA.isChecked()){
-                        id = "a";
-                    }
-                    else if (mCheckBoxB.isChecked()){
-                        id = "b";
-                    }
-                    else if (mCheckBoxC.isChecked()){
-                        id = "c";
-                    }
-                    else if (mCheckBoxD.isChecked()){
-                        id = "d";
-                    }
-                    else if (mCheckBoxE.isChecked()){
-                        id = "e";
-                    }
-
-                    Toast.makeText(ExerciseResolutionActivity.this, "id: " + id, Toast.LENGTH_SHORT).show();
+                if (buttonId != -1){
+                    RadioButton radioButton = findViewById(buttonId);
+                    String text = radioButton.getText().toString();
+                    Toast.makeText(ExerciseResolutionActivity.this, "id: " + text, Toast.LENGTH_SHORT).show();
                 }
             }
         });
