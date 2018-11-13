@@ -80,6 +80,10 @@ public class ChaptersActivity extends BaseActivity implements ChaptersRecyclerIt
 
     @Override
     public void onItemLongClick(View view, int position) {
+        Intent intent = new Intent(ChaptersActivity.this, ChapterPerformanceActivity.class);
+        intent.putExtra(CURRENT_SUBJECT, mCurrentSubject);
+        intent.putExtra(CURRENT_CHAPTER, mChaptersRecyclerViewAdapter.getChapter(position));
+        startActivity(intent);
     }
 
     private void getData(DataSnapshot dataSnapshot){

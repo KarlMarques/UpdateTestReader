@@ -18,7 +18,9 @@
         </activity>
         <activity android:name=".ChaptersActivity" />
         <activity android:name=".ExercisesActivity" />
-        <activity android:name=".ExerciseResolutionActivity"></activity>
+        <activity android:name=".ExerciseResolutionActivity" />
+        <activity android:name=".ChapterPerformanceActivity" />
+        <activity android:name=".SubjectPerformanceActivity"></activity>
     </application>
 
 </manifest>
