@@ -12,9 +12,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import static com.teachsoft.updatetestreader.BaseActivity.CHAPTERS_TITLE;
 import static com.teachsoft.updatetestreader.BaseActivity.CURRENT_CHAPTER;
 import static com.teachsoft.updatetestreader.BaseActivity.CURRENT_EXERCISE;
 import static com.teachsoft.updatetestreader.BaseActivity.CURRENT_SUBJECT;
+import static com.teachsoft.updatetestreader.BaseActivity.EXERCISES_TITLE;
+import static com.teachsoft.updatetestreader.BaseActivity.SUBJECTS_TITLE;
 
 public class ExerciseResolutionActivity extends AppCompatActivity {
 
@@ -34,6 +40,8 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
     private Chapter mCurrentChapter;
     private Exercise mCurrentExercise;
 
+    FirebaseDatabase mFirebaseDB = FirebaseDatabase.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +49,11 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mCurrentSubject = (Subject) intent.getSerializableExtra(CURRENT_SUBJECT);
-        String subjectCode = mCurrentSubject.getCode();
+        final String subjectCode = mCurrentSubject.getCode();
         mCurrentChapter = (Chapter) intent.getSerializableExtra(CURRENT_CHAPTER);
-        String chapterCode = mCurrentChapter.getCode();
+        final String chapterCode = mCurrentChapter.getCode();
         mCurrentExercise = (Exercise) intent.getSerializableExtra(CURRENT_EXERCISE);
-        String exerciseCode = mCurrentExercise.getCode();
+        final String exerciseCode = mCurrentExercise.getCode();
         String exerciseTitle = mCurrentExercise.getTitle();
         String exerciseQuestion = mCurrentExercise.getQuestion();
         String exerciseA = mCurrentExercise.getAlternative("a");
@@ -53,6 +61,7 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
         String exerciseC = mCurrentExercise.getAlternative("c");
         String exerciseD = mCurrentExercise.getAlternative("d");
         String exerciseE = mCurrentExercise.getAlternative("e");
+        final String exerciseAnswer = mCurrentExercise.getAnswer();
 
         mTextViewTitle = findViewById(R.id.textViewTitle);
         mTextViewQuestion = findViewById(R.id.textViewQuestion);
@@ -73,17 +82,32 @@ public class ExerciseResolutionActivity extends AppCompatActivity {
         mRadioButton3.setText(exerciseC);
         mRadioButton4.setText(exerciseD);
         mRadioButton5.setText(exerciseE);
+        mRadioButton1.setTag("A");
+        mRadioButton2.setTag("B");
+        mRadioButton3.setTag("C");
+        mRadioButton4.setTag("D");
+        mRadioButton5.setTag("E");
 
         mButtonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int buttonId = mRadioGroupAlternatives.getCheckedRadioButtonId();
 
-                if (buttonId != -1){
+//                if (buttonId != -1){
                     RadioButton radioButton = findViewById(buttonId);
-                    String text = radioButton.getText().toString();
-                    Toast.makeText(ExerciseResolutionActivity.this, "id: " + text, Toast.LENGTH_SHORT).show();
-                }
+                    String chosenAnswer = radioButton.getTag().toString();
+
+                    int score = 0;
+                    if (chosenAnswer.equals(exerciseAnswer)){
+                        score = 1;
+                    }
+
+                    mCurrentExercise.setScore(score);
+
+                    DatabaseReference dbReferenceCurrentExercise = mFirebaseDB.getReference(SUBJECTS_TITLE).child(subjectCode).child(CHAPTERS_TITLE).child(chapterCode).child(EXERCISES_TITLE).child(exerciseCode);
+
+                    dbReferenceCurrentExercise.setValue(mCurrentExercise);
+//                }
             }
         });
 
