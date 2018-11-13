@@ -76,15 +76,15 @@ public class ExercisesActivity extends BaseActivity implements ExercisesRecycler
 
     @Override
     public void onItemClick(View view, int position) {
-    }
-
-    @Override
-    public void onItemLongClick(View view, int position) {
         Intent intent = new Intent(ExercisesActivity.this, ExerciseResolutionActivity.class);
         intent.putExtra(CURRENT_SUBJECT, mCurrentSubject);
         intent.putExtra(CURRENT_CHAPTER, mCurrentChapter);
         intent.putExtra(CURRENT_EXERCISE, mExercisesRecyclerViewAdapter.getExercise(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
     }
 
     private void getData(DataSnapshot dataSnapshot){
